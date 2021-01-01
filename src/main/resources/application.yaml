@@ -1,0 +1,26 @@
+spring:
+  application.name: @project.name@
+
+server:
+  port: 9000
+
+logging:
+  file.name: immutables-dynamodb-mapper-poc.log
+  level:
+    com.github.simy4.poc: DEBUG
+    org.springframework: WARN
+
+springdoc.swagger-ui.path: /
+
+management.server.port: 9001
+
+cloud.aws.stack.auto: false
+
+db.entities.table-name: ${ENTITIES_TABLE:entities-table}
+---
+
+spring.profiles.active: local
+
+cloud.aws.region.static: us-east-1
+
+aws.local.endpoint: http://localhost:4566
