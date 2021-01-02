@@ -9,9 +9,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,10 +67,14 @@ public class ImmutablesDynamoDbMapperPocApplication {
       TableUtils.createTableIfNotExists(
           dynamoDB,
           new CreateTableRequest(
-              entitiesTableName,
-              List.of(
-                  new KeySchemaElement("pk", KeyType.HASH),
-                  new KeySchemaElement("sk", KeyType.RANGE))));
+                  entitiesTableName,
+                  List.of(
+                      new KeySchemaElement("pk", KeyType.HASH),
+                      new KeySchemaElement("sk", KeyType.RANGE)))
+              .withAttributeDefinitions(
+                  new AttributeDefinition("pk", ScalarAttributeType.S),
+                  new AttributeDefinition("sk", ScalarAttributeType.S))
+              .withProvisionedThroughput(new ProvisionedThroughput(2L, 2L)));
     };
   }
 
