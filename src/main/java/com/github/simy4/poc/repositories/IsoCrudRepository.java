@@ -4,18 +4,18 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-public abstract class IsoCrudRepository<A, Image> implements CrudRepository<A> {
+public abstract class IsoCrudRepository<A, Image, Id> implements CrudRepository<A, Id> {
   private final DynamoDBMapper dynamoDBMapper;
-  private final Class<Image> type;
 
-  protected IsoCrudRepository(DynamoDBMapper dynamoDBMapper, Class<Image> type) {
+  protected IsoCrudRepository(DynamoDBMapper dynamoDBMapper) {
     this.dynamoDBMapper = dynamoDBMapper;
-    this.type = type;
   }
 
   protected abstract Image toImage(A a);
 
   protected abstract A fromImage(Image a);
+
+  protected abstract Image fromId(Id id);
 
   protected final A modify(A a, UnaryOperator<Image> operator) {
     return fromImage(operator.apply(toImage(a)));
@@ -32,8 +32,8 @@ public abstract class IsoCrudRepository<A, Image> implements CrudRepository<A> {
   }
 
   @Override
-  public final Optional<A> get(String id) {
-    return Optional.ofNullable(dynamoDBMapper.load(type, id)).map(this::fromImage);
+  public final Optional<A> get(Id id) {
+    return Optional.ofNullable(dynamoDBMapper.load(fromId(id))).map(this::fromImage);
   }
 
   @Override
