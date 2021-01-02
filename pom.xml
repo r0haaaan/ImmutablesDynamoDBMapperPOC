@@ -190,6 +190,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <showLogs>true</showLogs>
                     <useColor>true</useColor>
                     <verbose>true</verbose>
                     <autoPull>always</autoPull>
@@ -205,6 +206,7 @@
                                 </ports>
                                 <log/>
                                 <wait>
+                                    <time>30000</time>
                                     <log>^Ready\.$</log>
                                 </wait>
                             </run>
