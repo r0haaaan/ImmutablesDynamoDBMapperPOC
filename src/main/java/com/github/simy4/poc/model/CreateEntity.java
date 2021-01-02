@@ -9,11 +9,9 @@ import org.immutables.value.Value;
 @JsonSerialize(as = ImmutableCreateEntity.class)
 @JsonDeserialize(as = ImmutableCreateEntity.class)
 public interface CreateEntity {
-    String getName();
+  String getName();
 
-    default Entity toEntity() {
-        return ImmutableEntity.builder()
-                .name(getName())
-                .build();
-    }
+  default Entity toEntity() {
+    return ImmutableEntity.builder().name(getName()).build();
+  }
 }

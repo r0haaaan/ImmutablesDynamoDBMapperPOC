@@ -9,7 +9,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import org.immutables.value.Value;
 
 @Value.Style(
-    stagedBuilder = true,
     jdkOnly = true,
     get = {"get*", "is*"},
     create = "new",

@@ -25,7 +25,9 @@ public class CrudController {
     this.crudRepository = crudRepository;
   }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Entity> getEntity(@RequestBody CreateEntity entity) {
     return ResponseEntity.ok(crudRepository.save(entity.toEntity()));
   }
