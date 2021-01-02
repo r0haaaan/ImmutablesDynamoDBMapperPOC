@@ -1,6 +1,7 @@
 package com.github.simy4.poc.repositories;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 

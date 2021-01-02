@@ -1,10 +1,11 @@
 package com.github.simy4.poc.model.converters;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
+
+import java.time.Instant;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DynamoDBInstantConverterTest {
   private final DynamoDBTypeConverter<String, Instant> typeConverter =

@@ -4,7 +4,6 @@ import com.github.simy4.poc.model.CreateEntity;
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
 import com.github.simy4.poc.repositories.CrudRepository;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /** Sample CRUD REST controller. */
 @RestController

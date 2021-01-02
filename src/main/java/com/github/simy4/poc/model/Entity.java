@@ -5,9 +5,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.simy4.poc.model.converters.DynamoDBInstantConverter;
-import java.time.Instant;
 import org.immutables.value.Value;
 import org.springframework.lang.Nullable;
+
+import java.time.Instant;
 
 @Data
 @Value.Immutable

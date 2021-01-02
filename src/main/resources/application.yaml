@@ -21,6 +21,10 @@ db.entities.table-name: ${ENTITIES_TABLE:entities-table}
 
 spring.profiles.active: local
 
-cloud.aws.region.static: us-east-1
+cloud.aws:
+  credentials:
+    access-key: test
+    secret-key: test
+  region.static: us-east-1
 
 aws.local.endpoint: http://localhost:4566

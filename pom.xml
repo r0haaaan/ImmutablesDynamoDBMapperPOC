@@ -152,7 +152,7 @@
                         <removeUnusedImports/>
 
                         <importOrder>
-                            <order>, javax, java, \#, \#javax, \#java</order>
+                            <order>,javax,java,\#,\#javax,\#java</order>
                         </importOrder>
                     </java>
                 </configuration>

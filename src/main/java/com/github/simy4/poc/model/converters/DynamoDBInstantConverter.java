@@ -1,6 +1,7 @@
 package com.github.simy4.poc.model.converters;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+
 import java.time.Instant;
 
 public class DynamoDBInstantConverter implements DynamoDBTypeConverter<String, Instant> {
