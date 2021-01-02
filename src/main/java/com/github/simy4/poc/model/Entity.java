@@ -15,11 +15,17 @@ import org.springframework.lang.Nullable;
 @DynamoDBTable(tableName = "${db.entities.table-name}")
 @JsonDeserialize(as = ImmutableEntity.class)
 public interface Entity extends Identifiable {
+  String PK_PREFIX = "Entity#";
+
+  static Identity identity(String sk) {
+    return ImmutableIdentity.of(PK_PREFIX, sk);
+  }
+
   @Override
   @DynamoDBHashKey
   @Value.Default
   default String getPk() {
-    return "Entity#";
+    return PK_PREFIX;
   }
 
   String getName();
