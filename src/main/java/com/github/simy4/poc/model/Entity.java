@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.simy4.poc.model.converters.DynamoDBTypeConvertedInstant;
@@ -19,6 +21,7 @@ import java.util.List;
 @Value.Immutable
 @Value.Modifiable
 @DynamoDBTable(tableName = "${db.entities.table-name}")
+@DynamoDBTypeConverted(converter = Entity.Converter.class)
 @JsonDeserialize(as = ImmutableEntity.class)
 public interface Entity {
   String PK_PREFIX = "Entity#";
@@ -60,5 +63,17 @@ public interface Entity {
   @DynamoDBTypeConvertedInstant
   default Instant getCreated() {
     return Instant.now();
+  }
+
+  final class Converter implements DynamoDBTypeConverter<ModifiableEntity, ImmutableEntity> {
+    @Override
+    public ModifiableEntity convert(ImmutableEntity entity) {
+      return new ModifiableEntity().from(entity);
+    }
+
+    @Override
+    public ImmutableEntity unconvert(ModifiableEntity entity) {
+      return entity.toImmutable();
+    }
   }
 }
