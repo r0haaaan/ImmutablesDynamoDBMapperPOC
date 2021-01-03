@@ -27,12 +27,18 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @IntegrationTest
 class CrudControllerIT {
 
-  private static final String CHANGE_ENTITY_PAYLOAD = "{"
+  private static final String CHANGE_ENTITY_PAYLOAD =
+      "{"
           + "  \"name\":\"name\","
           + "  \"address\":{"
           + "    \"line1\":\"123 example st\","
           + "    \"country\":\"Australia\""
-          + "  }"
+          + "  },"
+          + "  \"emails\":[{"
+          + "    \"email\":\"123@example.com\","
+          + "    \"verified\":true,"
+          + "    \"primary\":true"
+          + "  }]"
           + "}";
 
   @Autowired private WebApplicationContext webApplicationContext;
@@ -48,13 +54,14 @@ class CrudControllerIT {
   @Test
   void testCreateEntity() throws Exception {
     mockMvc
-        .perform(post("/crud")
-           .accept(MediaType.APPLICATION_JSON)
-           .contentType(MediaType.APPLICATION_JSON)
-           .content(CHANGE_ENTITY_PAYLOAD))
-           .andExpect(status().isCreated())
-           .andExpect(header().exists(HttpHeaders.LOCATION))
-           .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+        .perform(
+            post("/crud")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(CHANGE_ENTITY_PAYLOAD))
+        .andExpect(status().isCreated())
+        .andExpect(header().exists(HttpHeaders.LOCATION))
+        .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
   }
 
   @Nested
@@ -63,45 +70,50 @@ class CrudControllerIT {
 
     @BeforeEach
     void setUp() throws Exception {
-      entityId = objectMapper.readValue(mockMvc
-              .perform(post("/crud")
-                      .accept(MediaType.APPLICATION_JSON)
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .content(CHANGE_ENTITY_PAYLOAD))
-              .andExpect(status().isCreated())
-              .andReturn()
-              .getResponse()
-              .getContentAsString(StandardCharsets.UTF_8), Entity.class).getId();
+      entityId =
+          objectMapper
+              .readValue(
+                  mockMvc
+                      .perform(
+                          post("/crud")
+                              .accept(MediaType.APPLICATION_JSON)
+                              .contentType(MediaType.APPLICATION_JSON)
+                              .content(CHANGE_ENTITY_PAYLOAD))
+                      .andExpect(status().isCreated())
+                      .andReturn()
+                      .getResponse()
+                      .getContentAsString(StandardCharsets.UTF_8),
+                  Entity.class)
+              .getId();
     }
 
     @Test
     void testReadEntity() throws Exception {
       mockMvc
-              .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
-              .andExpect(status().isOk())
-              .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+          .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
     }
 
     @Test
     void testUpdateEntity() throws Exception {
       mockMvc
-              .perform(patch("/crud/{id}", entityId.getSk())
-                      .accept(MediaType.APPLICATION_JSON)
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .content("{\"name\":\"other-name\"}"))
-              .andExpect(status().isOk())
-              .andExpect(content().json("{\"name\":\"other-name\"}", false));
+          .perform(
+              patch("/crud/{id}", entityId.getSk())
+                  .accept(MediaType.APPLICATION_JSON)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content("{\"name\":\"other-name\"}"))
+          .andExpect(status().isOk())
+          .andExpect(content().json("{\"name\":\"other-name\"}", false));
     }
 
     @Test
     void testDeleteEntity() throws Exception {
-      mockMvc
-              .perform(delete("/crud/{id}", entityId.getSk()))
-              .andExpect(status().isNoContent());
+      mockMvc.perform(delete("/crud/{id}", entityId.getSk())).andExpect(status().isNoContent());
 
       mockMvc
-              .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
-              .andExpect(status().isNotFound());
+          .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound());
     }
   }
 }

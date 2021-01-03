@@ -13,6 +13,7 @@ import org.immutables.value.Value;
 import org.springframework.lang.Nullable;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Value.Immutable
@@ -36,6 +37,8 @@ public interface Entity {
   String getName();
 
   Address getAddress();
+
+  List<Email> getEmails();
 
   @Value.Default
   @DynamoDBHashKey

@@ -5,6 +5,8 @@ import org.immutables.value.Value;
 
 import javax.validation.Valid;
 
+import java.util.List;
+
 @Data
 @Value.Immutable
 @JsonDeserialize(as = ImmutableCreateEntity.class)
@@ -14,7 +16,14 @@ public interface CreateEntity {
   @Valid
   Address getAddress();
 
+  @Valid
+  List<Email> getEmails();
+
   default Entity toEntity() {
-    return ImmutableEntity.builder().name(getName()).address(getAddress()).build();
+    return ImmutableEntity.builder()
+        .name(getName())
+        .address(getAddress())
+        .addAllEmails(getEmails())
+        .build();
   }
 }
