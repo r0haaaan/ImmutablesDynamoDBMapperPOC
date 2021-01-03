@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,10 +16,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -42,8 +44,9 @@ class CrudControllerIT {
            .accept(MediaType.APPLICATION_JSON)
            .contentType(MediaType.APPLICATION_JSON)
            .content("{\"name\":\"name\"}"))
-        .andExpect(status().isOk())
-        .andExpect(content().json("{\"name\":\"name\"}", false));
+           .andExpect(status().isCreated())
+           .andExpect(header().exists(HttpHeaders.LOCATION))
+           .andExpect(content().json("{\"name\":\"name\"}", false));
   }
 
   @Nested
@@ -57,7 +60,7 @@ class CrudControllerIT {
                       .accept(MediaType.APPLICATION_JSON)
                       .contentType(MediaType.APPLICATION_JSON)
                       .content("{\"name\":\"name\"}"))
-              .andExpect(status().isOk())
+              .andExpect(status().isCreated())
               .andReturn()
               .getResponse()
               .getContentAsString(StandardCharsets.UTF_8), Entity.class).getId();

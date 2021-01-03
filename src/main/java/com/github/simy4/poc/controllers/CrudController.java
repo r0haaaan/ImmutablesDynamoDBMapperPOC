@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 
@@ -37,7 +38,13 @@ public class CrudController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Entity> createEntity(@Valid @RequestBody CreateEntity entity) {
-    return ResponseEntity.ok(crudRepository.save(entity.toEntity()));
+    var created = crudRepository.save(entity.toEntity());
+    return ResponseEntity.created(
+            ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId().getSk())
+                .toUri())
+        .body(created);
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)

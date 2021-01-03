@@ -19,12 +19,12 @@ public @interface DynamoDBTypeConvertedInstant {
   class Converter implements DynamoDBTypeConverter<String, Instant> {
     @Override
     public String convert(Instant instant) {
-      return null == instant ? null : instant.toString();
+      return instant.toString();
     }
 
     @Override
     public Instant unconvert(String text) {
-      return null == text ? null : Instant.parse(text);
+      return Instant.parse(text);
     }
   }
 }
