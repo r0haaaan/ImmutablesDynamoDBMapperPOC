@@ -63,7 +63,7 @@ public class CrudController {
       @PathVariable("id") String id, @Valid @RequestBody UpdateEntity entity) {
     return crudRepository
         .get(Entity.id(id))
-        .map(e -> crudRepository.save(e.patch(entity)))
+        .map(e -> crudRepository.save(entity.patch(e)))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }

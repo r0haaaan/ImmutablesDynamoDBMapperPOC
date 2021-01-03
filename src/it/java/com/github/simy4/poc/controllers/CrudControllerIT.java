@@ -27,6 +27,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @IntegrationTest
 class CrudControllerIT {
 
+  private static final String CHANGE_ENTITY_PAYLOAD = "{"
+          + "  \"name\":\"name\","
+          + "  \"address\":{"
+          + "    \"line1\":\"123 example st\","
+          + "    \"country\":\"Australia\""
+          + "  }"
+          + "}";
+
   @Autowired private WebApplicationContext webApplicationContext;
   @Autowired private ObjectMapper objectMapper;
 
@@ -43,10 +51,10 @@ class CrudControllerIT {
         .perform(post("/crud")
            .accept(MediaType.APPLICATION_JSON)
            .contentType(MediaType.APPLICATION_JSON)
-           .content("{\"name\":\"name\"}"))
+           .content(CHANGE_ENTITY_PAYLOAD))
            .andExpect(status().isCreated())
            .andExpect(header().exists(HttpHeaders.LOCATION))
-           .andExpect(content().json("{\"name\":\"name\"}", false));
+           .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
   }
 
   @Nested
@@ -59,7 +67,7 @@ class CrudControllerIT {
               .perform(post("/crud")
                       .accept(MediaType.APPLICATION_JSON)
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("{\"name\":\"name\"}"))
+                      .content(CHANGE_ENTITY_PAYLOAD))
               .andExpect(status().isCreated())
               .andReturn()
               .getResponse()
@@ -71,7 +79,7 @@ class CrudControllerIT {
       mockMvc
               .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
               .andExpect(status().isOk())
-              .andExpect(content().json("{\"name\":\"name\"}", false));
+              .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
     }
 
     @Test
