@@ -7,9 +7,9 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DynamoDBInstantConverterTest {
+class DynamoDBTypeConvertedInstantTest {
   private final DynamoDBTypeConverter<String, Instant> typeConverter =
-      new DynamoDBInstantConverter();
+      new DynamoDBTypeConvertedInstant.Converter();
 
   @Test
   void shouldConvert() {

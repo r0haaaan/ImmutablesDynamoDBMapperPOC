@@ -3,6 +3,7 @@ package com.github.simy4.poc.controllers;
 import com.github.simy4.poc.model.CreateEntity;
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
+import com.github.simy4.poc.model.UpdateEntity;
 import com.github.simy4.poc.repositories.CrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class CrudController {
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Entity> getEntity(@PathVariable("id") String id) {
     return crudRepository
-        .get(Entity.identity(id))
+        .get(Entity.id(id))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
@@ -52,9 +53,9 @@ public class CrudController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Entity> updateEntity(
-      @PathVariable("id") String id, @Valid @RequestBody CreateEntity entity) {
+      @PathVariable("id") String id, @Valid @RequestBody UpdateEntity entity) {
     return crudRepository
-        .get(Entity.identity(id))
+        .get(Entity.id(id))
         .map(e -> crudRepository.save(e.patch(entity)))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
@@ -63,6 +64,6 @@ public class CrudController {
   @DeleteMapping(path = "{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEntity(@PathVariable("id") String id) {
-    crudRepository.get(Entity.identity(id)).ifPresent(crudRepository::delete);
+    crudRepository.get(Entity.id(id)).ifPresent(crudRepository::delete);
   }
 }

@@ -1,0 +1,7 @@
+services:
+  localstack:
+    image: localstack/localstack:0.12.4
+    environment:
+      - "SERVICES=dynamodb"
+    ports:
+      - "4566:4566"
