@@ -14,7 +14,7 @@ import java.time.Instant;
 @DynamoDBTypeConverted(converter = DynamoDBTypeConvertedInstant.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBTypeConvertedInstant {
   class Converter implements DynamoDBTypeConverter<String, Instant> {
     @Override
