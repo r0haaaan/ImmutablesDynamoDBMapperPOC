@@ -2,8 +2,8 @@ package com.github.simy4.poc.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.simy4.poc.model.converters.DynamoDBTypeConverterIso;
 import org.immutables.value.Value;
 import org.springframework.lang.Nullable;
 
@@ -24,15 +24,9 @@ public interface Address {
 
   String getCountry();
 
-  final class Converter implements DynamoDBTypeConverter<ModifiableAddress, ImmutableAddress> {
-    @Override
-    public ModifiableAddress convert(ImmutableAddress address) {
-      return new ModifiableAddress().from(address);
-    }
-
-    @Override
-    public ImmutableAddress unconvert(ModifiableAddress address) {
-      return address.toImmutable();
+  final class Converter extends DynamoDBTypeConverterIso<ModifiableAddress, ImmutableAddress> {
+    public Converter() {
+      super(address -> new ModifiableAddress().from(address), ModifiableAddress::toImmutable);
     }
   }
 }

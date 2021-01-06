@@ -2,8 +2,8 @@ package com.github.simy4.poc.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.simy4.poc.model.converters.DynamoDBTypeConverterIso;
 import org.immutables.value.Value;
 
 @Data
@@ -28,15 +28,9 @@ public interface Email {
     return false;
   }
 
-  final class Converter implements DynamoDBTypeConverter<ModifiableEmail, ImmutableEmail> {
-    @Override
-    public ModifiableEmail convert(ImmutableEmail email) {
-      return new ModifiableEmail().from(email);
-    }
-
-    @Override
-    public ImmutableEmail unconvert(ModifiableEmail email) {
-      return email.toImmutable();
+  final class Converter extends DynamoDBTypeConverterIso<ModifiableEmail, ImmutableEmail> {
+    public Converter() {
+      super(email -> new ModifiableEmail().from(email), ModifiableEmail::toImmutable);
     }
   }
 }

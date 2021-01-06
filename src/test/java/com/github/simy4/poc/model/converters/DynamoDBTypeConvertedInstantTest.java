@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DynamoDBTypeConvertedInstantTest {
   private final DynamoDBTypeConverter<String, Instant> typeConverter =
@@ -24,6 +24,6 @@ class DynamoDBTypeConvertedInstantTest {
   @Test
   void shouldRoundtrip() {
     var instant = Instant.EPOCH;
-    assertEquals(instant, typeConverter.unconvert(typeConverter.convert(Instant.EPOCH)));
+    assertEquals(instant, typeConverter.unconvert(typeConverter.convert(instant)));
   }
 }
