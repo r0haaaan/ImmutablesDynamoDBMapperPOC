@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,21 +25,23 @@ import javax.validation.Valid;
 
 /** Sample CRUD REST controller. */
 @RestController
-@RequestMapping("/crud")
-public class CrudController {
+@RequestMapping("/v1/entities")
+public class EntityController {
 
   private final CrudRepository<Entity, Identity> crudRepository;
 
   @Autowired
-  public CrudController(CrudRepository<Entity, Identity> crudRepository) {
+  public EntityController(CrudRepository<Entity, Identity> crudRepository) {
     this.crudRepository = crudRepository;
   }
 
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Entity> createEntity(@Valid @RequestBody CreateEntity entity) {
-    var created = crudRepository.save(entity.toEntity());
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Entity> createEntity(
+      @RequestHeader("X-tenant-id") String tenant, @Valid @RequestBody CreateEntity entity) {
+    var created = crudRepository.save(entity.toEntity(tenant));
     return ResponseEntity.created(
             ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -48,9 +51,10 @@ public class CrudController {
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Entity> getEntity(@PathVariable("id") String id) {
+  public ResponseEntity<Entity> getEntity(
+      @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
     return crudRepository
-        .get(Entity.id(id))
+        .get(Entity.id(tenant, id))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
@@ -60,9 +64,11 @@ public class CrudController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Entity> updateEntity(
-      @PathVariable("id") String id, @Valid @RequestBody UpdateEntity entity) {
+      @RequestHeader("X-tenant-id") String tenant,
+      @PathVariable("id") String id,
+      @Valid @RequestBody UpdateEntity entity) {
     return crudRepository
-        .get(Entity.id(id))
+        .get(Entity.id(tenant, id))
         .map(e -> crudRepository.save(entity.patch(e)))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
@@ -70,7 +76,8 @@ public class CrudController {
 
   @DeleteMapping(path = "{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteEntity(@PathVariable("id") String id) {
-    crudRepository.get(Entity.id(id)).ifPresent(crudRepository::delete);
+  public void deleteEntity(
+      @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
+    crudRepository.get(Entity.id(tenant, id)).ifPresent(crudRepository::delete);
   }
 }

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,8 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @IntegrationTest
-class CrudControllerIT {
+class EntityControllerIT {
 
+  private static final String TENANT_ID = UUID.randomUUID().toString();
   private static final String CHANGE_ENTITY_PAYLOAD =
       "{"
           + "  \"name\":\"name\","
@@ -55,7 +57,8 @@ class CrudControllerIT {
   void testCreateEntity() throws Exception {
     mockMvc
         .perform(
-            post("/crud")
+            post("/v1/entities")
+                .header("X-tenant-id", TENANT_ID)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(CHANGE_ENTITY_PAYLOAD))
@@ -75,7 +78,8 @@ class CrudControllerIT {
               .readValue(
                   mockMvc
                       .perform(
-                          post("/crud")
+                          post("/v1/entities")
+                              .header("X-tenant-id", TENANT_ID)
                               .accept(MediaType.APPLICATION_JSON)
                               .contentType(MediaType.APPLICATION_JSON)
                               .content(CHANGE_ENTITY_PAYLOAD))
@@ -90,16 +94,26 @@ class CrudControllerIT {
     @Test
     void testReadEntity() throws Exception {
       mockMvc
-          .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
+          .perform(
+              get("/v1/entities/{id}", entityId.getSk())
+                  .header("X-tenant-id", TENANT_ID)
+                  .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+      mockMvc
+          .perform(
+              get("/v1/entities/{id}", entityId.getSk())
+                  .header("X-tenant-id", "wrong-tenant")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound());
     }
 
     @Test
     void testUpdateEntity() throws Exception {
       mockMvc
           .perform(
-              patch("/crud/{id}", entityId.getSk())
+              patch("/v1/entities/{id}", entityId.getSk())
+                  .header("X-tenant-id", TENANT_ID)
                   .accept(MediaType.APPLICATION_JSON)
                   .contentType(MediaType.APPLICATION_JSON)
                   .content("{\"name\":\"other-name\"}"))
@@ -109,10 +123,15 @@ class CrudControllerIT {
 
     @Test
     void testDeleteEntity() throws Exception {
-      mockMvc.perform(delete("/crud/{id}", entityId.getSk())).andExpect(status().isNoContent());
+      mockMvc
+          .perform(delete("/v1/entities/{id}", entityId.getSk()).header("X-tenant-id", TENANT_ID))
+          .andExpect(status().isNoContent());
 
       mockMvc
-          .perform(get("/crud/{id}", entityId.getSk()).accept(MediaType.APPLICATION_JSON))
+          .perform(
+              get("/v1/entities/{id}", entityId.getSk())
+                  .header("X-tenant-id", TENANT_ID)
+                  .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isNotFound());
     }
   }

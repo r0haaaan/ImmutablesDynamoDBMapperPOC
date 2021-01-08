@@ -19,8 +19,9 @@ public interface CreateEntity {
   @Valid
   List<Email> getEmails();
 
-  default Entity toEntity() {
+  default Entity toEntity(String tenant) {
     return ImmutableEntity.builder()
+        .tenant(tenant)
         .name(getName())
         .address(getAddress())
         .addAllEmails(getEmails())
