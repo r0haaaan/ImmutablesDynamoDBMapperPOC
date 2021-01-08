@@ -5,7 +5,12 @@ import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
 import com.github.simy4.poc.model.UpdateEntity;
 import com.github.simy4.poc.repositories.CrudRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 
+import java.util.Objects;
+
 /** Sample CRUD REST controller. */
 @RestController
 @RequestMapping("/v1/entities")
@@ -38,7 +45,11 @@ public class EntityController {
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(
+      responses =
+          @ApiResponse(
+              responseCode = "201",
+              headers = {@Header(name = HttpHeaders.ETAG), @Header(name = HttpHeaders.LOCATION)}))
   public ResponseEntity<Entity> createEntity(
       @RequestHeader("X-tenant-id") String tenant, @Valid @RequestBody CreateEntity entity) {
     var created = crudRepository.save(entity.toEntity(tenant));
@@ -47,15 +58,23 @@ public class EntityController {
                 .path("/{id}")
                 .buildAndExpand(created.getId().getSk())
                 .toUri())
+        .eTag(Objects.toString(created.getVersion(), "0"))
         .body(created);
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            headers = {@Header(name = HttpHeaders.ETAG)}),
+        @ApiResponse(responseCode = "404", content = @Content)
+      })
   public ResponseEntity<Entity> getEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
     return crudRepository
         .get(Entity.id(tenant, id))
-        .map(ResponseEntity::ok)
+        .map(e -> ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
@@ -63,6 +82,13 @@ public class EntityController {
       path = "{id}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            headers = {@Header(name = HttpHeaders.ETAG)}),
+        @ApiResponse(responseCode = "404", content = @Content)
+      })
   public ResponseEntity<Entity> updateEntity(
       @RequestHeader("X-tenant-id") String tenant,
       @PathVariable("id") String id,
@@ -70,7 +96,7 @@ public class EntityController {
     return crudRepository
         .get(Entity.id(tenant, id))
         .map(e -> crudRepository.save(entity.patch(e)))
-        .map(ResponseEntity::ok)
+        .map(e -> ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
