@@ -17,9 +17,9 @@ management.server.port: 9001
 cloud.aws.stack.auto: false
 
 db.entities.table-name: ${ENTITIES_TABLE:entities-table}
----
 
-spring.profiles.active: local
+---
+spring.config.activate.on-profile: local
 
 cloud.aws:
   credentials:
