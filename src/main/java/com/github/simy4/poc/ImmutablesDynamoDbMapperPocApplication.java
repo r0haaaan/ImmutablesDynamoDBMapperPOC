@@ -46,12 +46,12 @@ public class ImmutablesDynamoDbMapperPocApplication {
   @Bean
   public ApplicationRunner dynamoDBInitializer(
       AmazonDynamoDB dynamoDB, DynamoDBMapper dynamoDBMapper) {
-    return args ->
-        TableUtils.createTableIfNotExists(
-            dynamoDB,
-            dynamoDBMapper
-                .generateCreateTableRequest(ModifiableEntity.class)
-                .withProvisionedThroughput(new ProvisionedThroughput(2L, 2L)));
+    return args -> {
+      var request = dynamoDBMapper.generateCreateTableRequest(ModifiableEntity.class);
+      TableUtils.createTableIfNotExists(
+          dynamoDB, request.withProvisionedThroughput(new ProvisionedThroughput(2L, 2L)));
+      TableUtils.waitUntilActive(dynamoDB, request.getTableName());
+    };
   }
 
   @Bean
