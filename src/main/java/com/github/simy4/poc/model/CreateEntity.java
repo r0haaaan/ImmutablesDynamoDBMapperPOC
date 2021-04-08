@@ -19,11 +19,14 @@ public interface CreateEntity {
   @Valid
   List<Email> getEmails();
 
+  Status getStatus();
+
   default Entity toEntity(String tenant) {
     return ImmutableEntity.builder()
         .tenant(tenant)
         .name(getName())
         .address(getAddress())
+        .status(getStatus())
         .addAllEmails(getEmails())
         .build();
   }

@@ -39,7 +39,8 @@ class EntityControllerIT {
           + "    \"email\":\"123@example.com\","
           + "    \"verified\":true,"
           + "    \"primary\":true"
-          + "  }]"
+          + "  }],"
+          + "  \"status\": \"active\""
           + "}";
 
   @Autowired private WebApplicationContext webApplicationContext;

@@ -19,9 +19,13 @@ public interface UpdateEntity {
   @Nullable
   Address getAddress();
 
+  @Nullable
+  Status getStatus();
+
   default Entity patch(Entity entity) {
     return ImmutableEntity.copyOf(entity)
         .withName(Optional.ofNullable(getName()).orElseGet(entity::getName))
-        .withAddress(Optional.ofNullable(getAddress()).orElseGet(entity::getAddress));
+        .withAddress(Optional.ofNullable(getAddress()).orElseGet(entity::getAddress))
+        .withStatus(Optional.ofNullable(getStatus()).orElseGet(entity::getStatus));
   }
 }

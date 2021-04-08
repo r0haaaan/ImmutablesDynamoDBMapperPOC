@@ -47,6 +47,8 @@ public interface Entity {
 
   List<Email> getEmails();
 
+  Status getStatus();
+
   @Value.Default
   @JsonIgnore
   @DynamoDBHashKey
