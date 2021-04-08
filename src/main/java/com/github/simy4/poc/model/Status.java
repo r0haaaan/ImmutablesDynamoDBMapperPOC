@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @DynamoDBTypeConvertedEnum
 public enum Status {
-  @JsonProperty("active") ACTIVE,
-  @JsonProperty("inactive") INACTIVE
+  @JsonProperty("active")
+  ACTIVE,
+  @JsonProperty("inactive")
+  INACTIVE
 }
