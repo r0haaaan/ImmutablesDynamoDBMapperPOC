@@ -95,7 +95,8 @@ public abstract class Entity {
     return getId().hashCode();
   }
 
-  public static final class Converter extends DynamoDBTypeConverterIso<ModifiableEntity, ImmutableEntity> {
+  public static final class Converter
+      extends DynamoDBTypeConverterIso<ModifiableEntity, ImmutableEntity> {
     public Converter() {
       super(entity -> new ModifiableEntity().from(entity), ModifiableEntity::toImmutable);
     }
