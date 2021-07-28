@@ -45,4 +45,6 @@ jobs:
           distribution: 'adopt'
       - name: Install and Run Integration Tests
         run: |
-          mvn package docker:build docker:start
+          mvn clean install -DskipTests
+          mvn docker:build
+          mvn docker:start

@@ -182,6 +182,7 @@
                         <id>install</id>
                         <goals><goal>build</goal></goals>
                         <configuration>
+                            <imagePullPolicy>IfNotPresent</imagePullPolicy>
                             <images>
                                 <image>
                                     <name>com.github.simy4.poc/immutables-dynamodb-mapper-poc</name>
