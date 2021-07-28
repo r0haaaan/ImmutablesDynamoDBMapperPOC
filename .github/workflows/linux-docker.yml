@@ -12,7 +12,7 @@
 #   Red Hat, Inc. - initial API and implementation
 #
 
-name: Docker on Windows 
+name: Docker On Linux 
 
 on:
   push:
@@ -24,13 +24,9 @@ on:
 
 jobs:
   windows:
-    name: Windows
-    runs-on: windows-latest
+    name: Linux 
+    runs-on: ubuntu-latest
     steps:
-      - name: Get Windows Version > Used to retrieve specific Docker Image
-        shell: cmd
-        run: |
-          ver
       - name: Checkout
         uses: actions/checkout@v2.0.0
       - name: Setup Java 11
