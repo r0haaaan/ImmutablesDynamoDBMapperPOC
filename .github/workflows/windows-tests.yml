@@ -43,6 +43,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Install Docker Maven Plugin
+        run: |
+          git clone https://github.com/ncelerier/docker-maven-plugin
+          cd docker-maven-plugin
+          mvn -f pom.xml -B -DskipTests clean install
+          cd ..
       - name: Install and Run Integration Tests
         run: |
           mvn clean install -DskipTests
